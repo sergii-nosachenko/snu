@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Майбутнє Автоматизації: Тренди та Технології</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0f172a',       /* Slate 900 */
+                            card: '#1e293b',     /* Slate 800 */
+                            text: '#f1f5f9',     /* Slate 100 */
+                            primary: '#3b82f6',  /* Blue 500 */
+                            secondary: '#8b5cf6',/* Violet 500 */
+                            accent: '#06b6d4',   /* Cyan 500 */
+                            highlight: '#f43f5e' /* Rose 500 */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* cyber.bg */
+            color: #f1f5f9; /* cyber.text */
+        }
+
+        /* Chart Container Styles - Responsive & Constrained */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%; /* Containers fill grid cells, grid handles max-width */
+            height: 350px;
+            max-height: 400px;
+            margin: 0 auto;
+        }
+
+        .chart-container-lg {
+            height: 500px;
+            max-height: 600px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #06b6d4; 
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyber-accent selection:text-black">
+
+    <!-- Header Section -->
+    <header class="bg-gradient-to-r from-cyber-card to-cyber-bg border-b border-cyber-card shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyber-accent to-cyber-secondary">
+                        Еволюція Автоматизації
+                    </h1>
+                    <p class="mt-2 text-sm md:text-base text-gray-400">
+                        Сучасний стан галузі: від робастних алгоритмів до самооптимізації
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-cyber-primary bg-opacity-20 text-cyber-primary border border-cyber-primary">
+                        Industry 5.0 Ready
+                    </span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
+
+        <!-- Intro Text -->
+        <section class="prose prose-invert max-w-none text-center mb-12">
+            <p class="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto">
+                Індустрія автоматизації переживає фундаментальні зміни. Ми переходимо від жорстко запрограмованих логічних контролерів до гнучких, інтелектуальних систем, здатних адаптуватися до невизначеності. Цей дашборд візуалізує п'ять ключових технологічних стовпів цієї трансформації.
+            </p>
+        </section>
+
+        <!-- Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- 1. Robust Algorithms -->
+            <section class="bg-cyber-card rounded-xl shadow-xl overflow-hidden border border-gray-800 hover:border-cyber-accent transition duration-300">
+                <div class="p-6 border-b border-gray-800">
+                    <h2 class="text-2xl font-bold text-cyber-accent mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🛡️</span> Робастні Алгоритми
+                    </h2>
+                    <p class="text-gray-400 text-sm">
+                        Робота в умовах шуму та невизначеності.
+                    </p>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <p class="text-gray-300 mb-4">
+                            <strong>Проблема:</strong> Реальні датчики ніколи не бувають ідеальними. Вібрації, електричні наведення та збої створюють "шум". Класичні алгоритми можуть сприйняти цей шум за аварію.
+                            <br><br>
+                            <strong>Рішення:</strong> Робастні (стійкі) алгоритми використовують статистичні методи та фільтрацію Калмана для відокремлення корисного сигналу від шуму, запобігаючи хибним спрацюванням.
+                        </p>
+                    </div>
+                    <!-- Visualization: Robustness Line Chart -->
+                    <div class="chart-container">
+                        <canvas id="robustChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        * Графік демонструє, як робастний фільтр ігнорує випадкові викиди (шум), зберігаючи тренд.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 2. Explainable AI (XAI) -->
+            <section class="bg-cyber-card rounded-xl shadow-xl overflow-hidden border border-gray-800 hover:border-cyber-secondary transition duration-300">
+                <div class="p-6 border-b border-gray-800">
+                    <h2 class="text-2xl font-bold text-cyber-secondary mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🧠</span> AI з Пояснюваністю (XAI)
+                    </h2>
+                    <p class="text-gray-400 text-sm">
+                        Алгоритми, що пояснюють свої рішення.
+                    </p>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <p class="text-gray-300 mb-4">
+                            <strong>Проблема:</strong> Глибокі нейромережі часто працюють як "чорна скринька". Оператор бачить рішення ("Зупинити лінію"), але не розуміє чому. Це викликає недовіру.
+                            <br><br>
+                            <strong>Рішення:</strong> XAI надає інтерпретацію (наприклад, "Температура підшипника перевищила норму на 15%"), що дозволяє людям довіряти системі та швидше приймати рішення.
+                        </p>
+                    </div>
+                    <!-- Visualization: Trust Factors Bar Chart -->
+                    <div class="chart-container">
+                        <canvas id="xaiChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        * Фактори, що найбільше впливають на довіру операторів до автоматизованих систем.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 3. Hybrid Models -->
+            <section class="bg-cyber-card rounded-xl shadow-xl overflow-hidden border border-gray-800 hover:border-cyber-primary transition duration-300">
+                <div class="p-6 border-b border-gray-800">
+                    <h2 class="text-2xl font-bold text-cyber-primary mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🧬</span> Гібридні Моделі
+                    </h2>
+                    <p class="text-gray-400 text-sm">
+                        Фізика + Машинне Навчання.
+                    </p>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <p class="text-gray-300 mb-4">
+                            <strong>Концепція:</strong> Чисті ML-моделі потребують терабайт даних. Чисті фізичні моделі не враховують знос обладнання.
+                            <br><br>
+                            <strong>Синергія:</strong> Гібридні моделі використовують фізичні рівняння як "скелет", а ML — для "м'язів" (корекції похибок). Це дозволяє навчатися швидше на меншій кількості даних і гарантує фізичну адекватність результатів.
+                        </p>
+                    </div>
+                    <!-- Visualization: Model Comparison Radar Chart -->
+                    <div class="chart-container">
+                        <canvas id="hybridChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        * Порівняння ефективності трьох підходів до моделювання процесів.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 4. Edge Control -->
+            <section class="bg-cyber-card rounded-xl shadow-xl overflow-hidden border border-gray-800 hover:border-cyber-highlight transition duration-300">
+                <div class="p-6 border-b border-gray-800">
+                    <h2 class="text-2xl font-bold text-cyber-highlight mb-2 flex items-center">
+                        <span class="text-2xl mr-2">⚡</span> Edge Control
+                    </h2>
+                    <p class="text-gray-400 text-sm">
+                        Обчислення "на межі" (ближче до сенсорів).
+                    </p>
+                </div>
+                <div class="p-6">
+                    <div class="mb-4">
+                        <p class="text-gray-300 mb-4">
+                            <strong>Тенденція:</strong> Замість відправки всіх даних у "Хмару" (що довго і дорого), обробка переноситься безпосередньо на контролери біля верстатів.
+                            <br><br>
+                            <strong>Перевага:</strong> Це критично для систем реального часу. Якщо робот бачить перешкоду, він має зупинитися за мілісекунди, а не чекати відповіді сервера.
+                        </p>
+                    </div>
+                    <!-- Visualization: Cloud vs Edge Bar Chart -->
+                    <div class="chart-container">
+                        <canvas id="edgeChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-gray-500">
+                        * Порівняння затримок (Latency) та вартості передачі даних.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 5. Self-optimizing Systems (Full Width) -->
+            <section class="md:col-span-2 bg-cyber-card rounded-xl shadow-xl overflow-hidden border border-gray-800 hover:border-white transition duration-300">
+                <div class="p-6 border-b border-gray-800">
+                    <h2 class="text-2xl font-bold text-white mb-2 flex items-center">
+                        <span class="text-2xl mr-2">🚀</span> Self-optimizing Systems
+                    </h2>
+                    <p class="text-gray-400 text-sm">
+                        Системи, що самі шукають ідеальні налаштування.
+                    </p>
+                </div>
+                <div class="p-6 flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/3">
+                        <p class="text-gray-300 mb-4">
+                            <strong>Еволюція PID:</strong> Раніше інженери налаштовували регулятори вручну методом проб і помилок.
+                            <br><br>
+                            <strong>Автономність:</strong> Сучасні системи використовують алгоритми пошуку екстремуму (наприклад, градієнтний спуск або генетичні алгоритми), щоб знайти оптимальні параметри роботи в режимі реального часу.
+                            <br><br>
+                            <span class="text-cyber-accent">На візуалізації:</span> 3D-поверхня "вартості помилки". Система автоматично "скочується" в найнижчу точку (синя зона), де енерговитрати мінімальні, а продуктивність максимальна.
+                        </p>
+                        
+                        <div class="bg-gray-800 bg-opacity-50 p-4 rounded-lg mt-6">
+                            <h4 class="font-bold text-cyber-secondary mb-2">Ключові метрики оптимізації:</h4>
+                            <ul class="list-disc list-inside text-sm text-gray-400 space-y-1">
+                                <li>Мінімізація енергоспоживання</li>
+                                <li>Зменшення часу циклу</li>
+                                <li>Зниження відсотка браку</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Visualization: Plotly 3D Surface -->
+                    <div class="md:w-2/3 chart-container chart-container-lg bg-gray-900 rounded-lg border border-gray-700">
+                        <div id="optimizationPlot" style="width:100%; height:100%;"></div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Initialization Scripts -->
+    <script>
+        // --- UTILITY FUNCTIONS ---
+
+        // 16-Character Label Wrapping Function
+        function wrapLabel(label) {
+            if (typeof label !== 'string' || label.length <= 16) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length <= 16) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        }
+
+        // Process labels array
+        function processLabels(labels) {
+            return labels.map(label => wrapLabel(label));
+        }
+
+        // Standard Tooltip Config
+        const standardTooltipConfig = {
+            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+            titleColor: '#fff',
+            bodyColor: '#cbd5e1',
+            borderColor: '#3b82f6',
+            borderWidth: 1,
+            padding: 10,
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // Common Chart Options
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: { color: '#cbd5e1', font: { family: 'Inter' } }
+                },
+                tooltip: standardTooltipConfig
+            },
+            scales: {
+                y: {
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: {
+                    grid: { color: '#334155' },
+                    ticks: { color: '#94a3b8' }
+                }
+            }
+        };
+
+        // --- CHART 1: ROBUST ALGORITHMS (LINE) ---
+        const ctxRobust = document.getElementById('robustChart').getContext('2d');
+        const robustLabels = Array.from({length: 20}, (_, i) => `T${i*5}s`);
+        
+        // Data generation: Signal + Noise
+        const signal = robustLabels.map((_, i) => Math.sin(i * 0.3) * 30 + 50);
+        const noise = robustLabels.map(() => (Math.random() - 0.5) * 40); // High noise
+        const rawSensorData = signal.map((val, i) => val + noise[i]);
+        const robustData = signal.map((val, i) => val + (noise[i] * 0.1)); // Filtered
+
+        new Chart(ctxRobust, {
+            type: 'line',
+            data: {
+                labels: robustLabels,
+                datasets: [
+                    {
+                        label: 'Сирий сигнал (з шумом)',
+                        data: rawSensorData,
+                        borderColor: '#f43f5e', // Red/Rose for danger/noise
+                        backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                        borderWidth: 1,
+                        pointRadius: 2,
+                        tension: 0 // Jagged line
+                    },
+                    {
+                        label: 'Робастний фільтр (результат)',
+                        data: robustData,
+                        borderColor: '#06b6d4', // Cyan for clean/tech
+                        backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        tension: 0.4 // Smooth line
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    title: {
+                        display: true,
+                        text: 'Відновлення сигналу в умовах завад',
+                        color: '#f1f5f9'
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: XAI (HORIZONTAL BAR) ---
+        const ctxXAI = document.getElementById('xaiChart').getContext('2d');
+        const xaiRawLabels = [
+            "Зрозумілість причини помилки",
+            "Візуалізація зони уваги",
+            "Історична точність",
+            "Можливість втручання",
+            "Аудит рішень"
+        ];
+        
+        new Chart(ctxXAI, {
+            type: 'bar',
+            data: {
+                labels: processLabels(xaiRawLabels),
+                datasets: [{
+                    label: 'Рівень впливу на довіру оператора (%)',
+                    data: [85, 72, 65, 58, 45],
+                    backgroundColor: [
+                        '#8b5cf6', // Violet
+                        '#7c3aed',
+                        '#6d28d9',
+                        '#5b21b6',
+                        '#4c1d95'
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal bar
+                ...commonOptions,
+                scales: {
+                    x: {
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' },
+                        max: 100
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: '#cbd5e1', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: HYBRID MODELS (RADAR) ---
+        const ctxHybrid = document.getElementById('hybridChart').getContext('2d');
+        
+        new Chart(ctxHybrid, {
+            type: 'radar',
+            data: {
+                labels: processLabels([
+                    "Точність (Accuracy)", 
+                    "Швидкість навчання", 
+                    "Потреба в даних", 
+                    "Фізична валідність", 
+                    "Узагальнення (Generalization)"
+                ]),
+                datasets: [
+                    {
+                        label: 'Гібридна модель',
+                        data: [90, 85, 90, 95, 88], // Best balance
+                        fill: true,
+                        backgroundColor: 'rgba(6, 182, 212, 0.4)', // Cyan
+                        borderColor: '#06b6d4',
+                        pointBackgroundColor: '#06b6d4'
+                    },
+                    {
+                        label: 'Чистий ML',
+                        data: [95, 60, 20, 40, 50], // Good accuracy, needs lots of data, bad physics
+                        fill: true,
+                        backgroundColor: 'rgba(244, 63, 94, 0.2)', // Rose
+                        borderColor: '#f43f5e',
+                        pointBackgroundColor: '#f43f5e',
+                        borderDash: [5, 5]
+                    },
+                    {
+                        label: 'Фізична модель',
+                        data: [70, 90, 100, 100, 60], // Fast, low data needed, perfect physics, lower accuracy due to simplifications
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)', // Blue
+                        borderColor: '#3b82f6',
+                        pointBackgroundColor: '#3b82f6',
+                        borderDash: [2, 2]
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    r: {
+                        angleLines: { color: '#334155' },
+                        grid: { color: '#334155' },
+                        pointLabels: { color: '#cbd5e1', font: { size: 11 } },
+                        ticks: { display: false, backdropColor: 'transparent' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 4: EDGE CONTROL (GROUPED BAR) ---
+        const ctxEdge = document.getElementById('edgeChart').getContext('2d');
+        
+        new Chart(ctxEdge, {
+            type: 'bar',
+            data: {
+                labels: processLabels(["Затримка (Latency)", "Вартість трафіку", "Надійність"]),
+                datasets: [
+                    {
+                        label: 'Cloud Computing (Хмара)',
+                        data: [90, 85, 60], // High latency, high cost, medium reliability (depends on connection)
+                        backgroundColor: '#64748b', // Slate 500 (Old/Slow)
+                    },
+                    {
+                        label: 'Edge Control (На пристрої)',
+                        data: [10, 20, 95], // Low latency, low cost, high reliability
+                        backgroundColor: '#3b82f6', // Blue 500 (New/Fast)
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#334155' },
+                        ticks: { display: false } // Abstract units for comparison
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        ...standardTooltipConfig,
+                        callbacks: {
+                            ...standardTooltipConfig.callbacks,
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y > 80) return label + "Високий";
+                                if (context.parsed.y < 30) return label + "Низький";
+                                return label + "Середній";
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 5: SELF-OPTIMIZING (PLOTLY 3D SURFACE) ---
+        // Generating a "valley" function: z = x^2 + y^2 (paraboloid) with some noise/complexity
+        
+        const size = 25;
+        const xValues = [];
+        const yValues = [];
+        const zValues = [];
+
+        for (let x = -10; x <= 10; x += 1) {
+            xValues.push(x);
+        }
+        for (let y = -10; y <= 10; y += 1) {
+            yValues.push(y);
+        }
+
+        for (let i = 0; i < xValues.length; i++) {
+            const row = [];
+            for (let j = 0; j < yValues.length; j++) {
+                const x = xValues[i];
+                const y = yValues[j];
+                // Function: Cost = x^2 + y^2 + sin(x)*5 (local minima)
+                let value = (x*x + y*y) / 40 + Math.sin(x/2)*0.5; 
+                row.push(value);
+            }
+            zValues.push(row);
+        }
+
+        const dataPlotly = [{
+            z: zValues,
+            x: xValues,
+            y: yValues,
+            type: 'surface',
+            colorscale: 'Viridis', // Professional scientific look
+            contours: {
+                z: {
+                    show: true,
+                    usecolormap: true,
+                    highlightcolor: "#42f462",
+                    project: { z: true }
+                }
+            },
+            showscale: false // Hide sidebar legend for cleaner look
+        }];
+
+        const layoutPlotly = {
+            title: {
+                text: 'Ландшафт оптимізації параметрів',
+                font: { color: '#f1f5f9', size: 16 }
+            },
+            autosize: true,
+            margin: { l: 0, r: 0, b: 0, t: 30 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            scene: {
+                xaxis: { title: 'Параметр А (Тиск)', color: '#94a3b8' },
+                yaxis: { title: 'Параметр Б (Темп.)', color: '#94a3b8' },
+                zaxis: { title: 'Витрати', color: '#94a3b8' },
+                camera: {
+                    eye: { x: 1.5, y: 1.5, z: 1.2 }
+                }
+            }
+        };
+
+        const configPlotly = {
+            responsive: true,
+            displayModeBar: false // Disable tools for infographic feel
+        };
+
+        Plotly.newPlot('optimizationPlot', dataPlotly, layoutPlotly, configPlotly);
+
+    </script>
+    
+    <!-- 
+    Data Points Summary:
+    1. Robust Algorithms -> Line Chart -> Compare Noisy vs Filtered -> Chart.js
+    2. XAI -> Horizontal Bar -> Compare Trust Factors -> Chart.js
+    3. Hybrid Models -> Radar Chart -> Compare 3 Approaches -> Chart.js
+    4. Edge Control -> Grouped Bar -> Compare Cloud vs Edge -> Chart.js
+    5. Self-Optimizing -> 3D Surface -> Visualize Optimization Space -> Plotly.js (WebGL)
+    
+    Narrative Plan:
+    Start with the problem of noise, move to trust issues, introduce hybrid solutions, 
+    speed things up with Edge, and conclude with fully autonomous optimization.
+    
+    NO SVG USED. NO MERMAID USED.
+    -->
+</body>
+</html>
